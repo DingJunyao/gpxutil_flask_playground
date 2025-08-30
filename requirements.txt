@@ -1,0 +1,24 @@
+flask
+flask-sqlalchemy
+pymysql
+
+flask-jwt-extended
+
+gpxpy
+geopandas
+shapely
+svgwrite
+svgpathtools @ https://github.com/bcwhite-code/svgpathtools/archive/refs/heads/master.zip
+fontTools
+cairosvg
+pillow
+moviepy
+numpy
+imageio
+tqdm
+pyyaml
+loguru
+DBUtils
+
+celery
+flask-redis
