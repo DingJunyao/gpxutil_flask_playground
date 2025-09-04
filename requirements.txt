@@ -22,3 +22,4 @@ DBUtils
 
 celery
 flask-redis
+cryptography

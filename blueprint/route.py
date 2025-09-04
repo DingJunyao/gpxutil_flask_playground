@@ -13,7 +13,7 @@ from entity.route import RouteEntity, RoutePointEntity
 from ext import db
 from gpxutil.models.enum_class import CoordinateType
 from vo import Response
-from tasks import set_route_point_area_task
+from tasks import set_route_point_area_task, add_set_route_points_area_task
 
 route_bp = Blueprint('route', __name__, url_prefix='/route')
 
@@ -272,17 +272,21 @@ def import_route():
     # db.session.add(route_entity)
     db.session.commit()
     resp = Response(message="success", data={'id': route_entity_bare.id})
+    # if set_area:
+    #     logger.info(f'BEFORE set_area: {time.time() - start_time}')
+    #     # TODO 这条语句极为耗时
+    #     task_results = [set_route_point_area_task.delay(i.id) for i in point_entities]
+    #     logger.info(f'BEFORE task_results_ids: {time.time() - start_time}')
+    #     task_results_ids = [i.id for i in task_results]
+    #     logger.info(f'BEFORE set_area_task_id: {time.time() - start_time}')
+    #     set_area_task_id = f'route_set_area_{route_entity_bare.id}'
+    #     logger.info(f'BEFORE redis_client: {time.time() - start_time}')
+    #     redis_client.set(set_area_task_id, ','.join(task_results_ids))
+    #     logger.info(f'BEFORE resp.data: {time.time() - start_time}')
+    #     resp.data['set_area_task_id'] = set_area_task_id
     if set_area:
         logger.info(f'BEFORE set_area: {time.time() - start_time}')
-        # TODO 这条语句极为耗时
-        task_results = [set_route_point_area_task.delay(i.id) for i in point_entities]
-        logger.info(f'BEFORE task_results_ids: {time.time() - start_time}')
-        task_results_ids = [i.id for i in task_results]
-        logger.info(f'BEFORE set_area_task_id: {time.time() - start_time}')
-        set_area_task_id = f'route_set_area_{route_entity_bare.id}'
-        logger.info(f'BEFORE redis_client: {time.time() - start_time}')
-        redis_client.set(set_area_task_id, ','.join(task_results_ids))
-        logger.info(f'BEFORE resp.data: {time.time() - start_time}')
+        set_area_task_id = add_set_route_points_area_task(point_entities, user_id)
         resp.data['set_area_task_id'] = set_area_task_id
     logger.info(f'FINISH: {time.time() - start_time}')
     # resp = Response(message="success", data={'id': route_entity.id})
